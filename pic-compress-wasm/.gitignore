@@ -1,0 +1,17 @@
+# Built artifacts
+/target
+/pkg
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Testing
+coverage
+lcov.info

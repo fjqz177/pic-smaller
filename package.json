@@ -10,7 +10,12 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write --no-error-on-unmatched-pattern --ignore-unknown src/**/*",
-    "test": "vitest run"
+    "test": "vitest run",
+    "clean": "node scripts/clean.cjs",
+    "clean:all": "node scripts/clean.cjs --all",
+    "wasm:build": "node scripts/build-wasm.cjs",
+    "wasm:integrate": "node scripts/integrate-wasm.cjs",
+    "wasm:full": "npm run wasm:build && npm run wasm:integrate"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",

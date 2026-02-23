@@ -1,0 +1,39 @@
+[package]
+name = "pic-compress-wasm"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance WebAssembly image compression library for pic-smaller"
+license = "MIT"
+repository = "https://github.com/fjqz177/pic-smaller"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# WASM bindings
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+console_error_panic_hook = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+
+# Image processing - PNG only for now (pure Rust)
+image = { version = "0.24", default-features = false, features = ["png"] }
+png = "0.17"
+ravif = { version = "0.11", default-features = false }
+imgref = "1.12"
+rgb = "0.8"
+bytemuck = "1.25"
+
+# Utilities
+thiserror = "1.0"
+rayon = "1.10"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[profile.release]
+opt-level = "s"
+lto = false
+codegen-units = 4

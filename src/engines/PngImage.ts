@@ -1,10 +1,5 @@
-/**
- * Reference：
- * https://github.com/antelle/wasm-image-compressor
- */
-
 import { ImageBase, ProcessOutput } from "./ImageBase";
-import { Module } from "./PngWasmModule";
+import { compressPng } from "./PicCompressWasm";
 
 export class PngImage extends ImageBase {
   async compress(): Promise<ProcessOutput> {
@@ -13,31 +8,17 @@ export class PngImage extends ImageBase {
     const imageData = context.getImageData(0, 0, width, height).data;
 
     try {
-      const buffer = Module._malloc(imageData.byteLength);
-      Module.HEAPU8.set(imageData, buffer);
-      const imageDataLen = width * height * 4;
-      if (imageData.byteLength !== imageDataLen) {
-        return this.failResult();
-      }
-      const outputSizePointer = Module._malloc(4);
-
-      const result = Module._compress(
+      // 使用新的 Rust WASM 模块进行 PNG 压缩
+      const output = await compressPng(
+        new Uint8Array(imageData),
         width,
         height,
-        this.option.png.colors,
-        this.option.png.dithering,
-        buffer,
-        outputSizePointer,
+        {
+          colors: this.option.png.colors,
+          dithering: this.option.png.dithering,
+          compression_level: 6,
+        }
       );
-      if (result) {
-        return this.failResult();
-      }
-      const outputSize = Module.getValue(outputSizePointer, "i32", false);
-      const output = new Uint8Array(outputSize);
-      output.set(Module.HEAPU8.subarray(buffer, buffer + outputSize));
-
-      Module._free(buffer);
-      Module._free(outputSizePointer);
 
       const blob = new Blob([output], { type: this.info.blob.type });
       return {
@@ -47,6 +28,7 @@ export class PngImage extends ImageBase {
         src: URL.createObjectURL(blob),
       };
     } catch (error) {
+      console.error("[PngImage] Compression failed:", error);
       return this.failResult();
     }
   }

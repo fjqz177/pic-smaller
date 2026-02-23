@@ -1,21 +1,10 @@
-/**
- * Reference：
- * https://github.com/packurl/wasm_avif
- */
-
 import { Mimes } from "@/mimes";
-import { avif } from "./AvifWasmModule";
 import { ImageBase, ProcessOutput } from "./ImageBase";
+import { compressAvif } from "./PicCompressWasm";
 
 export class AvifImage extends ImageBase {
   /**
-   * Encode avif image with canvas context
-   * @param context
-   * @param width
-   * @param height
-   * @param quality
-   * @param speed
-   * @returns
+   * Encode AVIF image
    */
   static async encode(
     context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
@@ -25,23 +14,34 @@ export class AvifImage extends ImageBase {
     speed: number = 8,
   ): Promise<Blob> {
     const imageData = context.getImageData(0, 0, width, height).data;
-    const bytes = new Uint8Array(imageData);
-    const result: Uint8Array = await avif(bytes, width, height, quality, speed);
-    return new Blob([result], { type: Mimes.avif });
+    const output = await compressAvif(
+      new Uint8Array(imageData),
+      width,
+      height,
+      { quality, speed }
+    );
+    return new Blob([output], { type: Mimes.avif });
   }
 
   async compress(): Promise<ProcessOutput> {
     const { width, height, x, y } = this.getOutputDimension();
+
     try {
       const { context } = await this.createCanvas(width, height, x, y);
-      const blob = await AvifImage.encode(
-        context,
+      const imageData = context.getImageData(0, 0, width, height).data;
+
+      // 使用新的 Rust WASM 模块进行 AVIF 压缩
+      const output = await compressAvif(
+        new Uint8Array(imageData),
         width,
         height,
-        this.option.avif.quality,
-        this.option.avif.speed,
+        {
+          quality: this.option.avif.quality,
+          speed: this.option.avif.speed,
+        }
       );
 
+      const blob = new Blob([output], { type: Mimes.avif });
       return {
         width,
         height,
@@ -49,6 +49,7 @@ export class AvifImage extends ImageBase {
         src: URL.createObjectURL(blob),
       };
     } catch (error) {
+      console.error("[AvifImage] Compression failed:", error);
       return this.failResult();
     }
   }
