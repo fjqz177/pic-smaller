@@ -1,6 +1,6 @@
 /**
  * PicCompressWasm - Rust-based high-performance image compression
- * 
+ *
  * This module provides PNG and AVIF compression using WebAssembly
  */
 import init, {
@@ -21,7 +21,7 @@ export async function ensureWasmInit(): Promise<void> {
 
   if (!initPromise) {
     initPromise = (async () => {
-      // 正确的 WASM 文件路径
+      // 使用绝对路径从 public 目录加载
       await init("/wasm/pic_compress_wasm_bg.wasm");
       wasmInitialized = true;
       console.log("[PicCompressWasm] ✅ WASM module initialized");
@@ -54,7 +54,7 @@ export async function compressPng(
   imageData: Uint8Array,
   width: number,
   height: number,
-  options: PngCompressOptions = {}
+  options: PngCompressOptions = {},
 ): Promise<Uint8Array> {
   await ensureWasmInit();
 
@@ -84,7 +84,7 @@ export async function compressAvif(
   imageData: Uint8Array,
   width: number,
   height: number,
-  options: AvifCompressOptions = {}
+  options: AvifCompressOptions = {},
 ): Promise<Uint8Array> {
   await ensureWasmInit();
 

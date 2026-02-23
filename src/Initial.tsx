@@ -10,9 +10,7 @@ import { avifCheck } from "./engines/support";
 const loadResources = () => {
   const loadList: Array<Promise<any>> = [
     import("jszip"),
-    fetch(new URL("./engines/png.wasm", import.meta.url)),
     fetch(new URL("./engines/gif.wasm", import.meta.url)),
-    fetch(new URL("./engines/avif.wasm", import.meta.url)),
     import("./engines/WorkerPreview?worker"),
     import("./engines/WorkerCompress?worker"),
   ];
