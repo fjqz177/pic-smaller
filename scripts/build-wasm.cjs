@@ -34,7 +34,7 @@ try {
   // Build WASM module
   console.log("📦 Building with wasm-pack (release mode)...\n");
   execSync(
-    "wasm-pack build --release --target web --out-dir pkg --no-opt",
+    "wasm-pack build --release --target web --out-dir pkg",
     {
       stdio: "inherit",
       cwd: WASM_DIR,
