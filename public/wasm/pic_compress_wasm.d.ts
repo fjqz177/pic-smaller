@@ -39,9 +39,9 @@ export interface InitOutput {
     readonly compress_png_js: (a: number, b: number, c: number, d: number) => number;
     readonly init: () => number;
     readonly main: () => void;
-    readonly __wasm_bindgen_func_elem_133: (a: number, b: number) => void;
-    readonly __wasm_bindgen_func_elem_134: (a: number, b: number, c: number, d: number) => void;
-    readonly __wasm_bindgen_func_elem_1124: (a: number, b: number, c: number, d: number) => void;
+    readonly __wasm_bindgen_func_elem_132: (a: number, b: number) => void;
+    readonly __wasm_bindgen_func_elem_133: (a: number, b: number, c: number, d: number) => void;
+    readonly __wasm_bindgen_func_elem_1121: (a: number, b: number, c: number, d: number) => void;
     readonly __wbindgen_export: (a: number, b: number) => number;
     readonly __wbindgen_export2: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_export3: (a: number) => void;

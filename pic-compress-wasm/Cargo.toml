@@ -19,8 +19,8 @@ serde = { version = "1.0", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
 
 # Image processing - PNG only for now (pure Rust)
-image = { version = "0.24", default-features = false, features = ["png"] }
-png = "0.17"
+image = { version = "0.25", default-features = false, features = ["png"] }
+png = "0.18"
 ravif = { version = "0.13.0", default-features = false }
 imgref = "1.12"
 rgb = "0.8"
@@ -30,8 +30,9 @@ bytemuck = "1.25"
 imagequant = { version = "4.4.1", default-features = false }
 
 # Utilities
-thiserror = "1.0"
-rayon = "1.11.0"
+thiserror = "2"
+# Note: rayon removed - WASM threading requires complex setup (SharedArrayBuffer, COOP/COEP)
+# imagequant and ravif have internal optimizations that work well in WASM
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"

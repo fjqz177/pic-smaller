@@ -2,7 +2,7 @@
 
 use image::{ImageBuffer, Rgba};
 use imagequant::Attributes;
-use png::{BitDepth, ColorType as PngColorType, Compression, Encoder};
+use png::{BitDepth, ColorType as PngColorType, Compression, Encoder, Filter};
 use rgb::RGBA;
 
 use crate::error::CompressError;
@@ -53,8 +53,10 @@ pub fn compress_png(
         let mut encoder = Encoder::new(&mut png_data, width, height);
         encoder.set_color(PngColorType::Rgba);
         encoder.set_depth(BitDepth::Eight);
-        encoder.set_compression(Compression::Default);
-        encoder.set_filter(png::FilterType::Sub);
+        // PNG 0.18: Compression::Default -> Compression::Balanced
+        encoder.set_compression(Compression::Balanced);
+        // PNG 0.18: FilterType -> Filter
+        encoder.set_filter(Filter::Sub);
 
         let mut writer = encoder
             .write_header()
@@ -99,7 +101,6 @@ fn quantize_image(
         .quantize(&mut quant_img)
         .map_err(|e| CompressError::PngError(format!("Quantize error: {}", e)))?;
 
-    // remapped returns (Vec<RGBA<u8>>, Vec<u8>) - first is quantized pixels, second is palette
     let (quantized_rgba, _palette) = result
         .remapped(&mut quant_img)
         .map_err(|e| CompressError::PngError(format!("Remap error: {}", e)))?;
