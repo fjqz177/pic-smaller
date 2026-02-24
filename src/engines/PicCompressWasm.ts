@@ -21,8 +21,9 @@ export async function ensureWasmInit(): Promise<void> {
 
   if (!initPromise) {
     initPromise = (async () => {
-      // 使用绝对路径从 public 目录加载
-      await init("/wasm/pic_compress_wasm_bg.wasm");
+      // 使用相对路径加载 WASM（适配 GitHub Pages 的 /pic-smaller/ 子路径）
+      const wasmUrl = new URL("../../public/wasm/pic_compress_wasm_bg.wasm", import.meta.url).href;
+      await init(wasmUrl);
       wasmInitialized = true;
       console.log("[PicCompressWasm] ✅ WASM module initialized");
     })();
