@@ -1,7 +1,7 @@
 //! AVIF compression implementation
 
-use ravif::Encoder;
 use imgref::Img;
+use ravif::Encoder;
 use rgb::RGBA;
 
 use crate::error::CompressResult;
@@ -19,8 +19,8 @@ pub struct AvifOptions {
 impl Default for AvifOptions {
     fn default() -> Self {
         Self {
-            quality: 50,
-            speed: 8,
+            quality: 60,
+            speed: 10,
         }
     }
 }
@@ -43,14 +43,30 @@ pub fn compress_avif(
 ) -> CompressResult<Vec<u8>> {
     validate_dimensions(width, height)?;
     let image = rgba_to_image_buffer(data, width, height)?;
-    
+
     // Map quality to ravif's expected range (0-100, higher is better)
     let quality = options.quality as f32;
-    
-    // Map speed (1-10, higher is faster)
-    let speed = (10 - options.speed).max(0).min(9) as u8;
-    
-    // Encode to AVIF using ravif Encoder
+
+    // Map speed (1-10, higher is faster) to ravif speed (0-9, higher is faster)
+    // Use more aggressive mapping for better performance:
+    // User speed 1-3 -> ravif 0-2 (slow, best quality)
+    // User speed 4-7 -> ravif 3-6 (medium)
+    // User speed 8-10 -> ravif 7-9 (fast, good for web)
+    let ravif_speed = match options.speed {
+        1 => 0,
+        2 => 1,
+        3 => 2,
+        4 => 3,
+        5 => 4,
+        6 => 5,
+        7 => 6,
+        8 => 7,
+        9 => 8,
+        10 => 9,
+        _ => 9, // Default to fastest
+    };
+
+    // Encode to AVIF using ravif Encoder with optimized settings
     let img = Img::new(
         bytemuck::cast_slice::<u8, RGBA<u8>>(image.as_raw().as_slice()),
         width as usize,
@@ -58,9 +74,9 @@ pub fn compress_avif(
     );
     let result = Encoder::new()
         .with_quality(quality)
-        .with_speed(speed)
+        .with_speed(ravif_speed)
         .encode_rgba(img)
-        .map_err(|e| crate::error::CompressError::AvifError(e.to_string()))?;
-    
+        .map_err(|e: ravif::Error| crate::error::CompressError::AvifError(e.to_string()))?;
+
     Ok(result.avif_file)
 }

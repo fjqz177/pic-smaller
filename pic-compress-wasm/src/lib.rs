@@ -1,17 +1,17 @@
 //! Pic Compress WASM - High-performance image compression library
 
-use wasm_bindgen::prelude::*;
 use js_sys::Uint8Array;
+use wasm_bindgen::prelude::*;
 
 // Export modules
-mod png;
 mod avif;
 mod error;
+mod png;
 mod utils;
 
+pub use avif::{compress_avif, AvifOptions};
 pub use error::{CompressError, CompressResult};
 pub use png::{compress_png, PngOptions};
-pub use avif::{compress_avif, AvifOptions};
 
 /// Initialize the WASM module and set up panic hook
 #[wasm_bindgen(start)]
@@ -42,7 +42,7 @@ pub async fn compress_png_js(
 
     let rgba_data = data.to_vec();
     let result = compress_png(&rgba_data, width, height, options)?;
-    
+
     Ok(Uint8Array::from(result.as_slice()))
 }
 
@@ -63,6 +63,6 @@ pub async fn compress_avif_js(
 
     let rgba_data = data.to_vec();
     let result = compress_avif(&rgba_data, width, height, options)?;
-    
+
     Ok(Uint8Array::from(result.as_slice()))
 }

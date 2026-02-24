@@ -33,8 +33,8 @@ export const DefaultCompressOption: CompressOption = {
     dithering: false,
   },
   avif: {
-    quality: 50,
-    speed: 8,
+    quality: 60,
+    speed: 10,
   },
 };
 
