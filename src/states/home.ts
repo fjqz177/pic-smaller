@@ -28,10 +28,6 @@ export const DefaultCompressOption: CompressOption = {
     colors: 128,
     dithering: 0.5,
   },
-  gif: {
-    colors: 128,
-    dithering: false,
-  },
   avif: {
     quality: 60,
     speed: 10,

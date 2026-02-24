@@ -38,10 +38,6 @@ export interface CompressOption {
     colors: number; // 2-256
     dithering: number; // 0-1
   };
-  gif: {
-    colors: number; // 2-256
-    dithering: boolean; // boolean
-  };
   avif: {
     quality: number; // 1 - 100
     speed: number; //  1 - 10

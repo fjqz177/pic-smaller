@@ -38,7 +38,6 @@ export interface LocaleData {
     resizeLable: string;
     jpegLable: string;
     pngLable: string;
-    gifLable: string;
     avifLable: string;
     avifQuality: string;
     avifSpeed: string;
@@ -65,7 +64,6 @@ export interface LocaleData {
     confirmBtn: string;
     colorsDesc: string;
     pngDithering: string;
-    gifDithering: string;
     outputFormat: string;
     outputFormatPlaceholder: string;
     transparentFillDesc: string;

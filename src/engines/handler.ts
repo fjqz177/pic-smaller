@@ -4,13 +4,10 @@ import {
   ImageInfo,
   ProcessOutput,
 } from "./ImageBase";
-import { GifImage } from "./GifImage";
 import { CanvasImage } from "./CanvasImage";
 import { PngImage } from "./PngImage";
 import { AvifImage } from "./AvifImage";
 import { Mimes } from "@/mimes";
-import { SvgImage } from "./SvgImage";
-import { getSvgDimension } from "./svgParse";
 
 export interface MessageData {
   info: ImageInfo;
@@ -28,28 +25,7 @@ export async function convert(
   data: MessageData,
   method: HandleMethod = "compress",
 ): Promise<OutputMessageData | null> {
-  const mime = data.info.blob.type.toLowerCase();
-
-  // For SVG type, do not support type convert
-  if (Mimes.svg === mime) {
-    // SVG has dimension already
-    if (data.info.width > 0 && data.info.height > 0) {
-      return createHandler(data, method);
-    }
-
-    // If SVG has no dimension from main thread
-    const svgData = await data.info.blob.text();
-    let dimension = { width: 0, height: 0 };
-    try {
-      dimension = getSvgDimension(svgData);
-    } catch (error) {}
-    data.info.width = dimension.width;
-    data.info.height = dimension.height;
-
-    return createHandler(data, method);
-  }
-
-  // For JPG/JPEG/WEBP/AVIF/PNG/GIF type
+  // For JPG/JPEG/WEBP/AVIF/PNG type
   const bitmap = await createImageBitmap(data.info.blob);
   data.info.width = bitmap.width;
   data.info.height = bitmap.height;
@@ -120,10 +96,6 @@ export async function createHandler(
     image = new AvifImage(data.info, data.option);
   } else if (mime === Mimes.png) {
     image = new PngImage(data.info, data.option);
-  } else if (mime === Mimes.gif) {
-    image = new GifImage(data.info, data.option);
-  } else if (mime === Mimes.svg) {
-    image = new SvgImage(data.info, data.option);
   }
 
   // Unsupported handler type, return it

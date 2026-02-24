@@ -1,5 +1,4 @@
 import {
-  Checkbox,
   ColorPicker,
   Divider,
   Flex,
@@ -47,12 +46,10 @@ export const CompressOption = observer(() => {
   const getFormatOptions = () => {
     const options: { label: string; value: string }[] = [];
     Object.keys(Mimes).forEach((mime) => {
-      if (!["svg", "gif"].includes(mime)) {
-        options.push({
-          value: mime,
-          label: mime.toUpperCase(),
-        });
-      }
+      options.push({
+        value: mime,
+        label: mime.toUpperCase(),
+      });
     });
     return options;
   };
@@ -291,35 +288,6 @@ export const CompressOption = observer(() => {
           disabled={disabled}
           onChange={(value) => {
             homeState.tempOption.png.dithering = value;
-          }}
-        />
-      </OptionItem>
-
-      <Divider />
-      <div className={style.olabel}>{gstate.locale?.optionPannel.gifLable}</div>
-
-      <OptionItem>
-        <Checkbox
-          checked={homeState.tempOption.gif.dithering}
-          disabled={disabled}
-          onChange={(event) => {
-            homeState.tempOption.gif.dithering = event.target.checked;
-          }}
-        >
-          {gstate.locale?.optionPannel.gifDithering}
-        </Checkbox>
-      </OptionItem>
-
-      <OptionItem desc={gstate.locale?.optionPannel.colorsDesc}>
-        <Slider
-          defaultValue={DefaultCompressOption.gif.colors}
-          value={homeState.tempOption.gif.colors}
-          min={2}
-          max={256}
-          step={1}
-          disabled={disabled}
-          onChange={(value) => {
-            homeState.tempOption.gif.colors = value;
           }}
         />
       </OptionItem>
