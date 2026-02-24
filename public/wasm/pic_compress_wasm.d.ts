@@ -29,9 +29,9 @@ export interface InitOutput {
     readonly compress_png_js: (a: any, b: number, c: number, d: any) => any;
     readonly init: () => any;
     readonly main: () => void;
-    readonly wasm_bindgen__closure__destroy__heb87ec39d131b05e: (a: number, b: number) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h823a4507fd0e7976: (a: number, b: number, c: any) => [number, number];
-    readonly wasm_bindgen__convert__closures_____invoke__h1e227618e4722773: (a: number, b: number, c: any, d: any) => void;
+    readonly wasm_bindgen__closure__destroy__h286b9dbab703c0a7: (a: number, b: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__hccfe8aa6d1b2ba6a: (a: number, b: number, c: any) => [number, number];
+    readonly wasm_bindgen__convert__closures_____invoke__h12cd40f546e08416: (a: number, b: number, c: any, d: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

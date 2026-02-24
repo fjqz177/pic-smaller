@@ -21,7 +21,7 @@ serde-wasm-bindgen = "0.6"
 # Image processing - PNG only for now (pure Rust)
 image = { version = "0.24", default-features = false, features = ["png"] }
 png = "0.17"
-ravif = { version = "0.11", default-features = false }
+ravif = { version = "0.13.0", default-features = false }
 imgref = "1.12"
 rgb = "0.8"
 bytemuck = "1.25"
