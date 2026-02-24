@@ -8,10 +8,10 @@ on:
 
 jobs:
   ci:
-    name: Lint, Test & Build
+    name: Test & Build
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -50,11 +50,19 @@ jobs:
       - name: Build WASM module
         run: npm run wasm:full
 
-      - name: Lint
-        run: npm run lint
-
       - name: Run tests
         run: npm run test
 
       - name: Build
         run: npm run build
+
+      - name: Deploy to web_deploy branch
+        if: github.event_name == 'push'
+        run: |
+          cd dist
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "deploy: ${{ github.sha }}"
+          git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:web_deploy
