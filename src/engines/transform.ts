@@ -7,6 +7,9 @@ import { ImageItem, homeState } from "@/states/home";
 import { CompressOption, ImageInfo } from "./ImageBase";
 import { OutputMessageData } from "./handler";
 
+// 记录每个压缩任务的开始时间
+const compressStartTimeMap: Map<number, number> = new Map();
+
 export interface MessageData {
   info: ImageInfo;
   option: CompressOption;
@@ -24,7 +27,13 @@ async function message(event: MessageEvent<OutputMessageData>) {
   item.height = event.data.height;
   item.compress = event.data.compress ?? item.compress;
   item.preview = event.data.preview ?? item.preview;
-  item.compressTime = event.data.compressTime ?? item.compressTime;
+  
+  // 计算压缩耗时（从发送任务到接收到结果的总时间）
+  if (event.data.compress && compressStartTimeMap.has(event.data.key)) {
+    const startTime = compressStartTimeMap.get(event.data.key)!;
+    item.compressTime = Math.round(performance.now() - startTime);
+    compressStartTimeMap.delete(event.data.key);
+  }
 
   homeState.list.set(item.key, item);
 }
@@ -69,6 +78,8 @@ function createMessageData(item: ImageInfo): MessageData {
 }
 
 export function createCompressTask(item: ImageItem) {
+  // 记录压缩开始时间
+  compressStartTimeMap.set(item.key, performance.now());
   workerC?.postMessage(createMessageData(item));
 }
 
