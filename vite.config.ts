@@ -6,7 +6,7 @@ import path from "path";
 import fs from "fs";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     // WASM 文件复制插件
@@ -26,7 +26,7 @@ export default defineConfig({
       },
     },
   ],
-  base: "/",
+  base: mode === "production" ? "/pic-smaller/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -53,4 +53,4 @@ export default defineConfig({
   test: {
     include: ["tests/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
   },
-});
+}));
