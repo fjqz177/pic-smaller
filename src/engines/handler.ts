@@ -17,6 +17,7 @@ export interface MessageData {
 export interface OutputMessageData extends Omit<ImageInfo, "name" | "blob"> {
   compress?: ProcessOutput;
   preview?: ProcessOutput;
+  compressTime?: number; // 压缩耗时（毫秒）
 }
 
 export type HandleMethod = "compress" | "preview";
@@ -113,7 +114,9 @@ export async function createHandler(
   }
 
   if (image && method === "compress") {
+    const startTime = performance.now();
     result.compress = await image.compress();
+    result.compressTime = Math.round(performance.now() - startTime);
     return result;
   }
 

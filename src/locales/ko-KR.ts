@@ -34,6 +34,7 @@ const localeData: LocaleData = {
     action: "액션",
     newSize: "새 크기",
     newDimension: "새 차원",
+    compressTime: "소요 시간",
   },
   optionPannel: {
     failTip: "더 작게 만들 수 없습니다. 매개변수를 조정하고 다시 시도하세요.",

@@ -33,6 +33,7 @@ const localeData: LocaleData = {
     action: "アクション",
     newSize: "新しいサイズ",
     newDimension: "新しいディメンション",
+    compressTime: "経過時間",
   },
   optionPannel: {
     failTip:

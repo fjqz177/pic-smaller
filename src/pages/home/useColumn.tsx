@@ -148,6 +148,20 @@ export function useColumn(disabled: boolean) {
           return <Typography.Text type="danger">{format}</Typography.Text>;
         },
       },
+      {
+        dataIndex: "compressTime",
+        align: "right",
+        className: style.nowrap,
+        title: gstate.locale?.columnTitle.compressTime,
+        render(_, row) {
+          if (!row.compressTime) return "-";
+          return (
+            <Typography.Text type="secondary">
+              {row.compressTime} ms
+            </Typography.Text>
+          );
+        },
+      },
     );
   }
 

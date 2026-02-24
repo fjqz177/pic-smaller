@@ -52,6 +52,7 @@ export type ImageItem = {
   height: number;
   preview?: ProcessOutput;
   compress?: ProcessOutput;
+  compressTime?: number; // 压缩耗时（毫秒）
 };
 
 export class HomeState {

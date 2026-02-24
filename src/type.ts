@@ -33,6 +33,7 @@ export interface LocaleData {
     newDimension: string;
     decrease: string;
     action: string;
+    compressTime: string;
   };
   optionPannel: {
     resizeLable: string;

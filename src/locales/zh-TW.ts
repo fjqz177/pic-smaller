@@ -32,6 +32,7 @@ const localeData: LocaleData = {
     action: "操作",
     newSize: "新大小",
     newDimension: "新尺寸",
+    compressTime: "耗時",
   },
   optionPannel: {
     failTip: "無法更小，請調整參數後重試",

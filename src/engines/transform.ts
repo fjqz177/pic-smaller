@@ -24,6 +24,7 @@ async function message(event: MessageEvent<OutputMessageData>) {
   item.height = event.data.height;
   item.compress = event.data.compress ?? item.compress;
   item.preview = event.data.preview ?? item.preview;
+  item.compressTime = event.data.compressTime ?? item.compressTime;
 
   homeState.list.set(item.key, item);
 }

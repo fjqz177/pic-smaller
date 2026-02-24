@@ -31,6 +31,7 @@ const localeData: LocaleData = {
     action: "Eylem",
     newSize: "Yeni boyut",
     newDimension: "Yeni boyutlar",
+    compressTime: "Süre",
   },
   optionPannel: {
     failTip:

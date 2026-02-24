@@ -31,6 +31,7 @@ const localeData: LocaleData = {
     action: "عملیات",
     newSize: "اندازه جدید",
     newDimension: "ابعاد جدید",
+    compressTime: "زمان",
   },
   optionPannel: {
     failTip:
