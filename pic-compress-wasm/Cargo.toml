@@ -26,17 +26,27 @@ imgref = "1.12"
 rgb = "0.8"
 bytemuck = "1.25"
 
+# Professional PNG quantization (pure Rust, WASM-compatible)
+imagequant = { version = "4.4.1", default-features = false }
+
 # Utilities
 thiserror = "1.0"
-rayon = "1.10"
+rayon = "1.11.0"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 
+# Performance-optimized release profile
 [profile.release]
 opt-level = 3
-lto = true
-codegen-units = 1
+lto = "fat"              # Full link-time optimization
+codegen-units = 1        # Single codegen unit for better optimizations
+panic = "abort"          # Smaller binary, no unwind on panic
+strip = true             # Strip symbols (Rust 1.59+)
 
+# WASM-specific optimizations
 [package.metadata.wasm-pack.profile.release]
-wasm-opt = ["-O4", "--strip-producers", "--strip-target-features", "--strip-debug"]
+# Enable all features needed for wasm-opt -O4 optimization
+# --enable-bulk-memory: for memory.copy/memory.fill
+# --enable-nontrapping-float-to-int: for i32.trunc_sat_f64_u operations
+wasm-opt = ["-O4", "--enable-bulk-memory", "--enable-nontrapping-float-to-int", "--strip-producers", "--strip-target-features", "--strip-debug"]

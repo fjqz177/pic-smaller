@@ -1,20 +1,20 @@
 //! PNG compression implementation
 
 use image::{ImageBuffer, Rgba};
+use imagequant::Attributes;
 use png::{BitDepth, ColorType as PngColorType, Compression, Encoder};
+use rgb::RGBA;
 
+use crate::error::CompressError;
 use crate::error::CompressResult;
 use crate::utils::{rgba_to_image_buffer, validate_dimensions};
 
 /// PNG compression options
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct PngOptions {
-    /// Number of colors (2-256), for palette reduction
     pub colors: u8,
-    /// Dithering strength (0.0-1.0)
     #[serde(default)]
     pub dithering: f32,
-    /// Compression level (0-9)
     #[serde(default = "default_compression_level")]
     pub compression_level: u8,
 }
@@ -33,16 +33,6 @@ impl Default for PngOptions {
     }
 }
 
-/// Compress PNG image
-///
-/// # Arguments
-/// * `data` - RGBA image data
-/// * `width` - Image width
-/// * `height` - Image height
-/// * `options` - PNG compression options
-///
-/// # Returns
-/// Compressed PNG data as Vec<u8>
 pub fn compress_png(
     data: &[u8],
     width: u32,
@@ -52,18 +42,15 @@ pub fn compress_png(
     validate_dimensions(width, height)?;
     let image = rgba_to_image_buffer(data, width, height)?;
 
-    // Apply color quantization if needed
     let quantized = if options.colors < 255 {
-        quantize_image(&image, options.colors, options.dithering)
+        quantize_image(&image, options.colors, options.dithering)?
     } else {
         image
     };
 
-    // Encode to PNG
     let mut png_data = Vec::new();
     {
         let mut encoder = Encoder::new(&mut png_data, width, height);
-
         encoder.set_color(PngColorType::Rgba);
         encoder.set_depth(BitDepth::Eight);
         encoder.set_compression(Compression::Default);
@@ -81,28 +68,56 @@ pub fn compress_png(
     Ok(png_data)
 }
 
-/// Quantize image to reduced color palette
 fn quantize_image(
     image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
     colors: u8,
     _dithering: f32,
-) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
-    // Simple color quantization using k-means or median cut could be implemented here
-    // For now, we'll use a simple approach
-    // In production, consider using the `imagequant` crate
+) -> CompressResult<ImageBuffer<Rgba<u8>, Vec<u8>>> {
+    let width = image.width();
+    let height = image.height();
 
-    let mut quantized = ImageBuffer::new(image.width(), image.height());
+    let rgba_data: Vec<RGBA<u8>> = image
+        .pixels()
+        .map(|p| RGBA::new(p[0], p[1], p[2], p[3]))
+        .collect();
 
-    let color_step = (256 / colors as u32).max(1) as u8;
+    let mut attr = Attributes::new();
+    attr.set_quality(0, 100)
+        .map_err(|e| CompressError::PngError(format!("Quality error: {}", e)))?;
 
-    for (x, y, pixel) in image.enumerate_pixels() {
-        let r = pixel[0] / color_step * color_step;
-        let g = pixel[1] / color_step * color_step;
-        let b = pixel[2] / color_step * color_step;
-        let a = pixel[3];
+    attr.set_speed(4)
+        .map_err(|e| CompressError::PngError(format!("Speed error: {}", e)))?;
 
-        quantized.put_pixel(x, y, Rgba([r, g, b, a]));
+    attr.set_max_colors(colors as u32)
+        .map_err(|e| CompressError::PngError(format!("Colors error: {}", e)))?;
+
+    let mut quant_img = attr
+        .new_image(rgba_data, width as usize, height as usize, 1.0)
+        .map_err(|e| CompressError::PngError(format!("Image error: {}", e)))?;
+
+    let mut result = attr
+        .quantize(&mut quant_img)
+        .map_err(|e| CompressError::PngError(format!("Quantize error: {}", e)))?;
+
+    // remapped returns (Vec<RGBA<u8>>, Vec<u8>) - first is quantized pixels, second is palette
+    let (quantized_rgba, _palette) = result
+        .remapped(&mut quant_img)
+        .map_err(|e| CompressError::PngError(format!("Remap error: {}", e)))?;
+
+    let mut quantized_bytes = Vec::with_capacity(quantized_rgba.len() * 4);
+    for rgba in quantized_rgba {
+        quantized_bytes.extend_from_slice(&[rgba.r, rgba.g, rgba.b, rgba.a]);
     }
 
-    quantized
+    let expected_size = (width * height * 4) as usize;
+    if quantized_bytes.len() != expected_size {
+        return Err(CompressError::PngError(format!(
+            "Size mismatch: expected {}, got {}",
+            expected_size,
+            quantized_bytes.len()
+        )));
+    }
+
+    ImageBuffer::from_raw(width, height, quantized_bytes)
+        .ok_or_else(|| CompressError::PngError("ImageBuffer creation failed".to_string()))
 }

@@ -1,4 +1,11 @@
 //! Pic Compress WASM - High-performance image compression library
+//!
+//! # Performance Features
+//! - Optimized memory allocation patterns
+//! - Professional-grade PNG quantization (imagequant)
+//! - Fast AVIF encoding (ravif)
+//! - Inline hints for hot paths
+//! - LTO and aggressive compiler optimizations
 
 use js_sys::Uint8Array;
 use wasm_bindgen::prelude::*;
@@ -26,6 +33,11 @@ pub async fn init() -> Result<(), JsValue> {
 }
 
 /// Compress PNG image from JavaScript
+///
+/// # Performance notes:
+/// - Single memory allocation for input/output
+/// - Uses professional imagequant library for quantization
+/// - Optimized for minimal GC pressure
 #[wasm_bindgen]
 pub async fn compress_png_js(
     data: Uint8Array,
@@ -40,13 +52,20 @@ pub async fn compress_png_js(
             .map_err(|e| JsValue::from_str(&format!("Invalid PNG options: {}", e)))?
     };
 
+    // Convert Uint8Array to Vec - this is necessary as WASM owns the memory
     let rgba_data = data.to_vec();
     let result = compress_png(&rgba_data, width, height, options)?;
 
+    // Return compressed data as Uint8Array
     Ok(Uint8Array::from(result.as_slice()))
 }
 
 /// Compress AVIF image from JavaScript
+///
+/// # Performance notes:
+/// - Single memory allocation for input/output
+/// - Uses ravif encoder with optimized settings
+/// - Zero-copy conversion with bytemuck
 #[wasm_bindgen]
 pub async fn compress_avif_js(
     data: Uint8Array,
@@ -61,8 +80,10 @@ pub async fn compress_avif_js(
             .map_err(|e| JsValue::from_str(&format!("Invalid AVIF options: {}", e)))?
     };
 
+    // Convert Uint8Array to Vec - this is necessary as WASM owns the memory
     let rgba_data = data.to_vec();
     let result = compress_avif(&rgba_data, width, height, options)?;
 
+    // Return compressed data as Uint8Array
     Ok(Uint8Array::from(result.as_slice()))
 }

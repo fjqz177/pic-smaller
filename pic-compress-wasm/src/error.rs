@@ -1,4 +1,8 @@
 //! Error types for image compression
+//!
+//! Performance notes:
+//! - Minimal overhead error types
+//! - Efficient From implementations for error conversion
 
 use thiserror::Error;
 use wasm_bindgen::JsValue;
@@ -28,6 +32,7 @@ pub enum CompressError {
     IoError(#[from] std::io::Error),
 }
 
+/// Convert CompressError to JsValue for WASM boundary
 impl From<CompressError> for JsValue {
     fn from(err: CompressError) -> Self {
         JsValue::from_str(&err.to_string())

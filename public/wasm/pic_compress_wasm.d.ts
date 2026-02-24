@@ -3,11 +3,21 @@
 
 /**
  * Compress AVIF image from JavaScript
+ *
+ * # Performance notes:
+ * - Single memory allocation for input/output
+ * - Uses ravif encoder with optimized settings
+ * - Zero-copy conversion with bytemuck
  */
 export function compress_avif_js(data: Uint8Array, width: number, height: number, options: any): Promise<Uint8Array>;
 
 /**
  * Compress PNG image from JavaScript
+ *
+ * # Performance notes:
+ * - Single memory allocation for input/output
+ * - Uses professional imagequant library for quantization
+ * - Optimized for minimal GC pressure
  */
 export function compress_png_js(data: Uint8Array, width: number, height: number, options: any): Promise<Uint8Array>;
 
@@ -25,20 +35,18 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly compress_avif_js: (a: any, b: number, c: number, d: any) => any;
-    readonly compress_png_js: (a: any, b: number, c: number, d: any) => any;
-    readonly init: () => any;
+    readonly compress_avif_js: (a: number, b: number, c: number, d: number) => number;
+    readonly compress_png_js: (a: number, b: number, c: number, d: number) => number;
+    readonly init: () => number;
     readonly main: () => void;
-    readonly wasm_bindgen__closure__destroy__h286b9dbab703c0a7: (a: number, b: number) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__hccfe8aa6d1b2ba6a: (a: number, b: number, c: any) => [number, number];
-    readonly wasm_bindgen__convert__closures_____invoke__h12cd40f546e08416: (a: number, b: number, c: any, d: any) => void;
-    readonly __wbindgen_malloc: (a: number, b: number) => number;
-    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
-    readonly __wbindgen_exn_store: (a: number) => void;
-    readonly __externref_table_alloc: () => number;
-    readonly __wbindgen_externrefs: WebAssembly.Table;
-    readonly __wbindgen_free: (a: number, b: number, c: number) => void;
-    readonly __externref_table_dealloc: (a: number) => void;
+    readonly __wasm_bindgen_func_elem_133: (a: number, b: number) => void;
+    readonly __wasm_bindgen_func_elem_134: (a: number, b: number, c: number, d: number) => void;
+    readonly __wasm_bindgen_func_elem_1124: (a: number, b: number, c: number, d: number) => void;
+    readonly __wbindgen_export: (a: number, b: number) => number;
+    readonly __wbindgen_export2: (a: number, b: number, c: number, d: number) => number;
+    readonly __wbindgen_export3: (a: number) => void;
+    readonly __wbindgen_export4: (a: number, b: number, c: number) => void;
+    readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
     readonly __wbindgen_start: () => void;
 }
 

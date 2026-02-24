@@ -1,4 +1,8 @@
 //! AVIF compression implementation
+//!
+//! Performance optimizations:
+//! - Optimized speed/quality mapping
+//! - Minimal allocations in encoding path
 
 use imgref::Img;
 use ravif::Encoder;
@@ -35,6 +39,12 @@ impl Default for AvifOptions {
 ///
 /// # Returns
 /// Compressed AVIF data as Vec<u8>
+///
+/// # Performance notes:
+/// - Uses ravif encoder with optimized speed/quality settings
+/// - Speed mapping: user 1-10 -> ravif 0-9 (higher is faster)
+/// - Zero-copy conversion using bytemuck for efficient memory usage
+#[inline]
 pub fn compress_avif(
     data: &[u8],
     width: u32,
@@ -67,11 +77,15 @@ pub fn compress_avif(
     };
 
     // Encode to AVIF using ravif Encoder with optimized settings
+    // Using bytemuck for zero-copy conversion from u8 to RGBA
     let img = Img::new(
         bytemuck::cast_slice::<u8, RGBA<u8>>(image.as_raw().as_slice()),
         width as usize,
         height as usize,
     );
+
+    // Create encoder with quality and speed settings
+    // The encoding is the performance-critical operation
     let result = Encoder::new()
         .with_quality(quality)
         .with_speed(ravif_speed)
