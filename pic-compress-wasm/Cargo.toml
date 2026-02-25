@@ -40,14 +40,25 @@ wasm-bindgen-test = "0.3"
 # Performance-optimized release profile
 [profile.release]
 opt-level = 3
-lto = "fat"              # Full link-time optimization
-codegen-units = 1        # Single codegen unit for better optimizations
-panic = "abort"          # Smaller binary, no unwind on panic
-strip = true             # Strip symbols (Rust 1.59+)
+lto = "fat"       # Full link-time optimization
+codegen-units = 1 # Single codegen unit for better optimizations
+panic = "abort"   # Smaller binary, no unwind on panic
+strip = true      # Strip symbols (Rust 1.59+)
 
 # WASM-specific optimizations
 [package.metadata.wasm-pack.profile.release]
 # Enable all features needed for wasm-opt -O4 optimization
 # --enable-bulk-memory: for memory.copy/memory.fill
 # --enable-nontrapping-float-to-int: for i32.trunc_sat_f64_u operations
-wasm-opt = ["-O4", "--enable-bulk-memory", "--enable-nontrapping-float-to-int", "--strip-producers", "--strip-target-features", "--strip-debug"]
+# --enable-simd: for 128-bit SIMD operations (performance boost)
+# Note: --enable-threads is intentionally disabled for now because the current
+# runtime/build path does not enable wasm atomics + threaded execution.
+wasm-opt = [
+    "-O4",
+    "--enable-bulk-memory",
+    "--enable-nontrapping-float-to-int",
+    "--enable-simd",
+    "--strip-producers",
+    "--strip-target-features",
+    "--strip-debug",
+]

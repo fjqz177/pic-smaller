@@ -33,13 +33,21 @@ try {
 
   // Build WASM module
   console.log("📦 Building with wasm-pack (release mode)...\n");
-  execSync(
-    "wasm-pack build --release --target web --out-dir pkg",
-    {
-      stdio: "inherit",
-      cwd: WASM_DIR,
-    }
-  );
+  const rustFlags = [
+    "-C",
+    "target-feature=+simd128,+bulk-memory,+nontrapping-fptoint",
+  ].join(" ");
+
+  execSync("wasm-pack build --release --target web --out-dir pkg", {
+    stdio: "inherit",
+    cwd: WASM_DIR,
+    env: {
+      ...process.env,
+      RUSTFLAGS: process.env.RUSTFLAGS
+        ? `${process.env.RUSTFLAGS} ${rustFlags}`
+        : rustFlags,
+    },
+  });
 
   // Copy WASM files to public directory
   console.log("\n📋 Copying WASM files to public/wasm...\n");

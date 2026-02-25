@@ -6,14 +6,14 @@
 
 use image::{ImageBuffer, Rgba};
 
-/// Convert RGBA data to ImageBuffer
+/// Convert owned RGBA bytes to ImageBuffer without extra copy
 ///
 /// # Performance notes:
-/// - Single allocation for the image buffer
-/// - Validates size before allocation to avoid wasted work
+/// - Reuses caller-owned buffer to avoid duplicate allocation/copy
+/// - Validates size before constructing ImageBuffer
 #[inline]
-pub fn rgba_to_image_buffer(
-    data: &[u8],
+pub fn rgba_vec_to_image_buffer(
+    data: Vec<u8>,
     width: u32,
     height: u32,
 ) -> Result<ImageBuffer<Rgba<u8>, Vec<u8>>, crate::CompressError> {
@@ -25,12 +25,10 @@ pub fn rgba_to_image_buffer(
         });
     }
 
-    // Clone data into the buffer - this is necessary as ImageBuffer owns its data
-    // The alternative (borrowing) would require lifetime management that's incompatible with WASM
-    ImageBuffer::from_raw(width, height, data.to_vec()).ok_or_else(|| {
+    ImageBuffer::from_raw(width, height, data).ok_or_else(|| {
         crate::CompressError::InvalidDataSize {
             expected: expected_size,
-            actual: data.len(),
+            actual: expected_size,
         }
     })
 }

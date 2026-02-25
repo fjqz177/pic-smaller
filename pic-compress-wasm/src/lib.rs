@@ -54,7 +54,7 @@ pub async fn compress_png_js(
 
     // Convert Uint8Array to Vec - this is necessary as WASM owns the memory
     let rgba_data = data.to_vec();
-    let result = compress_png(&rgba_data, width, height, options)?;
+    let result = compress_png(rgba_data, width, height, options)?;
 
     // Return compressed data as Uint8Array
     Ok(Uint8Array::from(result.as_slice()))
@@ -82,7 +82,7 @@ pub async fn compress_avif_js(
 
     // Convert Uint8Array to Vec - this is necessary as WASM owns the memory
     let rgba_data = data.to_vec();
-    let result = compress_avif(&rgba_data, width, height, options)?;
+    let result = compress_avif(rgba_data, width, height, options)?;
 
     // Return compressed data as Uint8Array
     Ok(Uint8Array::from(result.as_slice()))

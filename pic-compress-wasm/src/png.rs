@@ -7,7 +7,7 @@ use rgb::RGBA;
 
 use crate::error::CompressError;
 use crate::error::CompressResult;
-use crate::utils::{rgba_to_image_buffer, validate_dimensions};
+use crate::utils::{rgba_vec_to_image_buffer, validate_dimensions};
 
 /// PNG compression options
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -34,13 +34,13 @@ impl Default for PngOptions {
 }
 
 pub fn compress_png(
-    data: &[u8],
+    data: Vec<u8>,
     width: u32,
     height: u32,
     options: PngOptions,
 ) -> CompressResult<Vec<u8>> {
     validate_dimensions(width, height)?;
-    let image = rgba_to_image_buffer(data, width, height)?;
+    let image = rgba_vec_to_image_buffer(data, width, height)?;
 
     let quantized = if options.colors < 255 {
         quantize_image(&image, options.colors, options.dithering)?
@@ -53,8 +53,7 @@ pub fn compress_png(
         let mut encoder = Encoder::new(&mut png_data, width, height);
         encoder.set_color(PngColorType::Rgba);
         encoder.set_depth(BitDepth::Eight);
-        // PNG 0.18: Compression::Default -> Compression::Balanced
-        encoder.set_compression(Compression::Balanced);
+        encoder.set_compression(map_compression_level(options.compression_level));
         // PNG 0.18: FilterType -> Filter
         encoder.set_filter(Filter::Sub);
 
@@ -68,6 +67,15 @@ pub fn compress_png(
     }
 
     Ok(png_data)
+}
+
+#[inline(always)]
+fn map_compression_level(level: u8) -> Compression {
+    match level {
+        0..=3 => Compression::Fast,
+        4..=7 => Compression::Balanced,
+        _ => Compression::High,
+    }
 }
 
 fn quantize_image(

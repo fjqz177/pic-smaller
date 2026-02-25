@@ -9,7 +9,7 @@ use ravif::Encoder;
 use rgb::RGBA;
 
 use crate::error::CompressResult;
-use crate::utils::{rgba_to_image_buffer, validate_dimensions};
+use crate::utils::{rgba_vec_to_image_buffer, validate_dimensions};
 
 /// AVIF compression options
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -46,13 +46,13 @@ impl Default for AvifOptions {
 /// - Zero-copy conversion using bytemuck for efficient memory usage
 #[inline]
 pub fn compress_avif(
-    data: &[u8],
+    data: Vec<u8>,
     width: u32,
     height: u32,
     options: AvifOptions,
 ) -> CompressResult<Vec<u8>> {
     validate_dimensions(width, height)?;
-    let image = rgba_to_image_buffer(data, width, height)?;
+    let image = rgba_vec_to_image_buffer(data, width, height)?;
 
     // Map quality to ravif's expected range (0-100, higher is better)
     let quality = options.quality as f32;
