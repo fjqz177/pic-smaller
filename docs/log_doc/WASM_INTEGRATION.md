@@ -250,9 +250,10 @@ strip = true        # 移除调试信息
 
 ### 启用 SIMD 优化
 
-```toml
-[profile.release]
-target-cpu = "simd128"  # 启用 WASM SIMD
+```bash
+# 在构建时通过 RUSTFLAGS 启用 WASM target features
+RUSTFLAGS='-C target-feature=+simd128,+bulk-memory,+nontrapping-fptoint' \
+  wasm-pack build --release --target web --out-dir pkg
 ```
 
 然后重新构建：
