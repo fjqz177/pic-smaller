@@ -27,7 +27,7 @@ async function message(event: MessageEvent<OutputMessageData>) {
   item.height = event.data.height;
   item.compress = event.data.compress ?? item.compress;
   item.preview = event.data.preview ?? item.preview;
-  
+
   // 计算压缩耗时（从发送任务到接收到结果的总时间）
   if (event.data.compress && compressStartTimeMap.has(event.data.key)) {
     const startTime = compressStartTimeMap.get(event.data.key)!;

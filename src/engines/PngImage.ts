@@ -17,7 +17,7 @@ export class PngImage extends ImageBase {
           colors: this.option.png.colors,
           dithering: this.option.png.dithering,
           compression_level: 6,
-        }
+        },
       );
 
       const blob = new Blob([output], { type: this.info.blob.type });

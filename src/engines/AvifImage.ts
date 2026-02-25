@@ -18,7 +18,7 @@ export class AvifImage extends ImageBase {
       new Uint8Array(imageData),
       width,
       height,
-      { quality, speed }
+      { quality, speed },
     );
     return new Blob([output], { type: Mimes.avif });
   }
@@ -38,7 +38,7 @@ export class AvifImage extends ImageBase {
         {
           quality: this.option.avif.quality,
           speed: this.option.avif.speed,
-        }
+        },
       );
 
       const blob = new Blob([output], { type: Mimes.avif });

@@ -1,11 +1,4 @@
-import {
-  ColorPicker,
-  Divider,
-  Flex,
-  InputNumber,
-  Select,
-  Slider,
-} from "antd";
+import { ColorPicker, Divider, Flex, InputNumber, Select, Slider } from "antd";
 import style from "./index.module.scss";
 import { observer } from "mobx-react-lite";
 import { DefaultCompressOption, homeState } from "@/states/home";
