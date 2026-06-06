@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-06-04
-**Commit:** b9d753e
+**Generated:** 2026-06-07
+**Commit:** 08695e4
 **Branch:** master
 
 ## OVERVIEW
@@ -14,7 +14,7 @@ Pic Smaller（图小小）— 纯前端在线图片压缩工具。Vite + React 1
 pic-smaller/
 ├── src/                    # 前端源码
 │   ├── engines/            # 图片压缩引擎（核心域）→ AGENTS.md
-│   ├── components/         # UI 组件（每组件一个目录 + CSS Module）
+│   ├── components/         # UI 组件（每组件一个目录 + CSS Module）→ AGENTS.md
 │   ├── pages/              # 页面（home、error404）
 │   ├── states/             # MobX 页面状态（仅 home.ts）
 │   ├── locales/            # 国际化翻译文件（9 种语言）
@@ -24,9 +24,15 @@ pic-smaller/
 │   ├── router.tsx          # 自定义客户端路由（history + import.meta.glob）
 │   ├── modules.ts          # Vite glob 导入映射（pages、locales）
 │   ├── global.tsx          # MobX 全局状态 gstate
-│   └── type.ts             # 全局类型定义
+│   ├── Initial.tsx         # 初始化加载组件（预加载资源后启动路由）
+│   ├── type.ts             # 全局类型定义
+│   ├── ContextAction.ts    # Antd 静态方法包装（message/modal/notification）
+│   ├── locale.ts           # 国际化初始化
+│   ├── functions.ts        # 工具函数聚合导出
+│   ├── media.ts            # 媒体类型常量
+│   └── mimes.ts            # MIME 类型映射
 ├── pic-compress-wasm/      # Rust WASM 子项目 → AGENTS.md
-├── scripts/                # 构建脚本（WASM 构建、集成、清理）
+├── scripts/                # 构建脚本（WASM 构建、集成、清理，含 .bat/.cjs/.sh）
 ├── tests/                  # 测试（Vitest，仅 utils.test.ts）
 ├── public/wasm/            # WASM 运行时产物（pic_compress_wasm.js）
 └── docs/                   # 文档截图
@@ -44,7 +50,7 @@ pic-smaller/
 | 图片压缩逻辑 | `src/engines/` | ImageBase → 具体引擎 → Worker → Queue |
 | WASM 压缩核心 | `pic-compress-wasm/src/` | Rust 实现 PNG/WebP/AVIF 压缩 |
 | 国际化 | `src/locale.ts` + `src/locales/*.ts` | 9 种语言，localStorage 缓存 |
-| UI 组件 | `src/components/{Name}/` | 每组件 index.tsx + index.module.scss |
+| UI 组件 | `src/components/{Name}/` | 每组件 index.tsx + index.module.scss；详见 `src/components/AGENTS.md` |
 | Antd 静态方法 | `src/ContextAction.ts` | 导出 message/modal/notification |
 | 构建配置 | `vite.config.ts` `tsconfig.json` | @/ alias → src/ |
 | WASM 构建 | `scripts/build-wasm.cjs` `scripts/integrate-wasm.cjs` | wasm-pack 构建 → public/wasm |
@@ -100,11 +106,14 @@ npm run wasm:full        # wasm:build + wasm:integrate 一键构建
 
 ## NOTES
 
-- **无现有 AGENTS.md**：这是首次生成，基于 `b9d753e` 快照
+- **分层 AGENTS.md**：由 `/init-deep` 生成（2026-06-07），详见 `src/engines/AGENTS.md`、`src/components/AGENTS.md`、`pic-compress-wasm/AGENTS.md`
 - **非标准路由**：未使用 react-router，自实现 `history` + `import.meta.glob` 动态加载，`gstate.page` 直接存放 ReactNode
 - **WASM 构建依赖**：`wasm:full` 需要 Rust 工具链 + `wasm-pack` + `wasm32-unknown-unknown` target；CI 环境已配置（Node 24 + dtolnay/rust-toolchain + wasm-pack-action）
+- **COOP/COEP Headers**：Vite dev/preview 服务器设置 `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp`，WASM 的 SharedArrayBuffer 依赖此配置；部署时必须确保服务器正确设置
 - **Dockerfile 注意**：使用 `--ignore-scripts` 安装且不单独构建 WASM，确保 `public/wasm/` 已存在于构建上下文
 - **测试覆盖率**：当前未配置 coverage；建议通过 `vitest --coverage` 添加
+- **ESLint 配置**：仓库中未找到 `.eslintrc.*` 文件，lint 脚本可运行但规则未在仓库中固化；建议添加
+- **Vite 构建插件**：自定义插件在 `closeBundle` 时将 `public/wasm/` 复制到 `dist/wasm/`，确保部署产物包含 WASM
 - **submit artifacts**：`dist/` 和 `pic-compress-wasm/target/` 为构建产物，已提交入仓库；重新生成通过 `npm run wasm:full && npm run build`
 
 <!-- gitnexus:start -->
