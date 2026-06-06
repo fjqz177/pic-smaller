@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-aKtaBQYM.js";var t=e({default:()=>n});function n(e){return new Worker(`/pic-smaller/assets/WorkerPreview-DWqr2QwN.js`,{name:e?.name})}export{n,t};
