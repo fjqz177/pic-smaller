@@ -172,10 +172,10 @@ export abstract class ImageBase {
         return originDimension;
       }
 
-      let x = 0;
-      let y = 0;
-      let newWidth = 0;
-      let newHeight = 0;
+      let x;
+      let y;
+      let newWidth;
+      let newHeight;
 
       if (
         cropWidthRatio / cropHeightRatio >=

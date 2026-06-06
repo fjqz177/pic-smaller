@@ -9,8 +9,11 @@ let modal: Omit<ModalStaticFunctions, "warn">;
 
 export function ContextAction() {
   const staticFunction = App.useApp();
+  // eslint-disable-next-line react-hooks/globals -- antd App.useApp() static method initialization pattern
   message = staticFunction.message;
+  // eslint-disable-next-line react-hooks/globals
   modal = staticFunction.modal;
+  // eslint-disable-next-line react-hooks/globals
   notification = staticFunction.notification;
   return null;
 }

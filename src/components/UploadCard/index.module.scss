@@ -16,7 +16,7 @@
   }
 
   &:active {
-    background-color: darken($color: #f9f9f9, $amount: 3);
+    background-color: color.adjust($color: #f9f9f9, $lightness: -3%);
   }
 
   > input {

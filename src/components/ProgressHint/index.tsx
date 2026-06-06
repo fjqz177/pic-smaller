@@ -11,7 +11,7 @@ export const ProgressHint = observer(() => {
   const info = homeState.getProgressHintInfo();
   const { isMobile } = useResponse();
 
-  let rate: React.ReactNode = null;
+  let rate: React.ReactNode;
   if (info.originSize > info.outputSize) {
     rate = (
       <Typography.Text type="success" strong>

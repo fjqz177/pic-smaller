@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { normalize } from "./functions";
 import { history } from "./router";
 import { LocaleData } from "./type";
@@ -11,7 +11,13 @@ export class GlobalState {
   public locale: LocaleData | null = null;
   public loading: boolean = false;
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      pathname: observable,
+      page: observable.ref,
+      lang: observable,
+      locale: observable,
+      loading: observable,
+    });
   }
 }
 

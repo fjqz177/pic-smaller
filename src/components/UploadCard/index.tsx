@@ -65,7 +65,7 @@ export const UploadCard = observer(() => {
         }
       }
 
-      files.length > 0 && createImageList(files);
+      if (files.length > 0) createImageList(files);
     };
 
     const target = dragRef.current!;

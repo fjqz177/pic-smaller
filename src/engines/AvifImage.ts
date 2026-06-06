@@ -20,7 +20,7 @@ export class AvifImage extends ImageBase {
       height,
       { quality, speed },
     );
-    return new Blob([output], { type: Mimes.avif });
+    return new Blob([output as BlobPart], { type: Mimes.avif });
   }
 
   async compress(): Promise<ProcessOutput> {
@@ -41,7 +41,7 @@ export class AvifImage extends ImageBase {
         },
       );
 
-      const blob = new Blob([output], { type: Mimes.avif });
+      const blob = new Blob([output as BlobPart], { type: Mimes.avif });
       return {
         width,
         height,

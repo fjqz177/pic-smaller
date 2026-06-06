@@ -55,7 +55,7 @@ async function loadPageComponent(pathname: string) {
     const importer = modules[`/src/pages/${pathname}/index.tsx`]();
     const result = await importer;
     return <result.default />;
-  } catch (error) {
+  } catch {
     const error404 = await import(`@/pages/error404/index.tsx`);
     return <error404.default />;
   }
